@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vietnamese NLP System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="static/css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- API Status Badge -->
+    <div class="api-status">
+        <span id="apiStatus" class="badge bg-secondary">
+            <i class="fas fa-circle"></i> Checking API...
+        </span>
+    </div>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center mb-4">
+                    <i class="fas fa-language"></i> Vietnamese NLP System
+                </h1>
+                <p class="text-center text-muted">Hệ thống xử lý ngôn ngữ tự nhiên tiếng Việt: POS Tagging & Chuyển đổi Ngôn ngữ Ký hiệu</p>
+            </div>
+        </div>
+        
+        <!-- Navigation Tabs -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="pos-tab" data-bs-toggle="tab" data-bs-target="#pos-panel" type="button" role="tab">
+                            <i class="fas fa-tags"></i> POS Tagging
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="sign-tab" data-bs-toggle="tab" data-bs-target="#sign-panel" type="button" role="tab">
+                            <i class="fas fa-hands"></i> Ngôn ngữ Ký hiệu
+                        </button>
+                    </li>
+                    <!-- <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="grammar-tab" data-bs-toggle="tab" data-bs-target="#grammar-panel" type="button" role="tab">
+                            <i class="fas fa-microscope"></i> So sánh Ngữ pháp
+                        </button>
+                    </li> -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="mainTabContent">
+            <!-- POS Tagging Tab -->
+            <div class="tab-pane fade show active" id="pos-panel" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-edit"></i> Nhập văn bản - POS Tagging</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="exampleSelect" class="form-label">Chọn ví dụ mẫu:</label>
+                                    <select class="form-select" id="exampleSelect">
+                                        <option value="">-- Chọn ví dụ --</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <textarea class="form-control" id="inputText" rows="4" 
+                                        placeholder="Nhập câu tiếng Việt cần phân tích POS..."></textarea>
+                                </div>
+                                
+                                <button class="btn btn-primary btn-lg w-100" id="analyzeBtn">
+                                    <i class="fas fa-search"></i> Phân tích POS
+                                </button>
+                                
+                                <div class="loading mt-3 text-center" id="posLoading">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Đang phân tích...</span>
+                                    </div>
+                                    <p class="mt-2">Đang phân tích POS... Vui lòng chờ.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- POS Results -->
+                        <div id="posResultsSection" class="mt-4" style="display: none;">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-chart-bar"></i> Kết quả POS Tagging</h5>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Thống kê -->
+                                    <div class="row mb-4">
+                                        <div class="col-md-3">
+                                            <div class="card bg-primary text-white">
+                                                <div class="card-body text-center">
+                                                    <h4 id="totalWords">0</h4>
+                                                    <small>Tổng số từ</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="card bg-success text-white">
+                                                <div class="card-body text-center">
+                                                    <h4 id="uniqueTags">0</h4>
+                                                    <small>Số loại nhãn</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="card bg-info text-white">
+                                                <div class="card-body text-center">
+                                                    <h4 id="processingTime">0s</h4>
+                                                    <small>Thời gian xử lý</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="card bg-warning text-white">
+                                                <div class="card-body text-center">
+                                                    <h4 id="wordsPerSecond">0</h4>
+                                                    <small>Từ/giây</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Văn bản được gán nhãn -->
+                                    <h6><i class="fas fa-tags"></i> Văn bản được gán nhãn:</h6>
+                                    <div id="taggedText" class="border p-3 mb-4 rounded bg-light"></div>
+                                    
+                                    <!-- Bảng kết quả -->
+                                    <h6><i class="fas fa-table"></i> Bảng chi tiết:</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover">
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th>STT</th>
+                                                    <th>Từ</th>
+                                                    <th>Nhãn từ loại</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="resultsTable">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-info-circle"></i> Thông tin nhãn POS</h5>
+                            </div>
+                            <div class="card-body tag-colors">
+                                <div class="mb-2"><span class="word-tag tag-NOUN">NOUN</span> - Danh từ</div>
+                                <div class="mb-2"><span class="word-tag tag-PROPN">PROPN</span> - Danh từ riêng</div>
+                                <div class="mb-2"><span class="word-tag tag-VERB">VERB</span> - Động từ</div>
+                                <div class="mb-2"><span class="word-tag tag-ADJ">ADJ</span> - Tính từ</div>
+                                <div class="mb-2"><span class="word-tag tag-ADV">ADV</span> - Trạng từ</div>
+                                <div class="mb-2"><span class="word-tag tag-ADP">ADP</span> - Giới từ</div>
+                                <div class="mb-2"><span class="word-tag tag-PRON">PRON</span> - Đại từ</div>
+                                <div class="mb-2"><span class="word-tag tag-DET">DET</span> - Từ hạn định</div>
+                                <div class="mb-2"><span class="word-tag tag-NUM">NUM</span> - Số từ</div>
+                                <div class="mb-2"><span class="word-tag tag-PUNCT">PUNCT</span> - Dấu câu</div>
+                                <div class="mb-2"><span class="word-tag tag-CCONJ">CCONJ</span> - Liên từ đẳng lập</div>
+                                <div class="mb-2"><span class="word-tag tag-SCONJ">SCONJ</span> - Liên từ phụ thuộc</div>
+                                <div class="mb-2"><span class="word-tag tag-PART">PART</span> - Tiểu từ</div>
+                                <div class="mb-2"><span class="word-tag tag-INTJ">INTJ</span> - Thán từ</div>
+                                <div class="mb-2"><span class="word-tag tag-X">X</span> - Khác</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h5><i class="fas fa-book"></i> Hướng dẫn</h5>
+                            </div>
+                            <div class="card-body">
+                                <ol>
+                                    <li>Nhập câu tiếng Việt vào ô văn bản</li>
+                                    <li>Hoặc chọn một ví dụ mẫu từ dropdown</li>
+                                    <li>Nhấn nút <strong>Phân tích POS</strong></li>
+                                    <li>Xem kết quả phân tích từ loại và thống kê</li>
+                                </ol>
+                                
+                                <hr>
+                                
+                                <p class="mb-0"><strong>Backend:</strong> FastAPI<br>
+                                <strong>POS Tagger:</strong> UndertheSea<br>
+                                <strong>Phân tích:</strong> Tự động gán nhãn từ loại</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sign Language Tab -->
+            <div class="tab-pane fade" id="sign-panel" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-hands"></i> Nhập văn bản - Chuyển đổi Ngôn ngữ Ký hiệu</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="signExampleSelect" class="form-label">Chọn ví dụ mẫu:</label>
+                                    <select class="form-select" id="signExampleSelect">
+                                        <option value="">-- Chọn ví dụ --</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <textarea class="form-control" id="signInputText" rows="4" 
+                                        placeholder="Nhập câu tiếng Việt cần chuyển đổi sang ngôn ngữ ký hiệu..."></textarea>
+                                </div>
+                                
+                                <button class="btn btn-success btn-lg w-100" id="convertSignBtn">
+                                    <i class="fas fa-hands"></i> Chuyển đổi sang Ký hiệu
+                                </button>
+                                
+                                <div class="loading mt-3 text-center" id="signLoading">
+                                    <div class="spinner-border text-success" role="status">
+                                        <span class="visually-hidden">Đang chuyển đổi...</span>
+                                    </div>
+                                    <p class="mt-2">Đang chuyển đổi sang ngôn ngữ ký hiệu... Vui lòng chờ.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Sign Language Results -->
+                        <div id="signResultsSection" class="mt-4" style="display: none;">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-hands"></i> Kết quả chuyển đổi Ngôn ngữ Ký hiệu</h5>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Câu gốc -->
+                                    <h6><i class="fas fa-quote-left"></i> Câu tiếng Việt gốc:</h6>
+                                    <div id="originalSentence" class="border p-3 mb-4 rounded bg-light"></div>
+                                    
+                                    <!-- Chuỗi ký hiệu -->
+                                    <h6><i class="fas fa-hands"></i> Chuỗi ngôn ngữ ký hiệu:</h6>
+                                    <div id="signSequence" class="border p-3 mb-4 rounded bg-info text-white"></div>
+                                    
+                                    <!-- Phân tích POS -->
+                                    <h6><i class="fas fa-tags"></i> Phân tích từ và hành động:</h6>
+                                    <div id="wordDetailsTable" class="table-responsive mb-4">
+                                        <table class="table table-striped table-sm">
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th>STT</th>
+                                                    <th>Từ gốc</th>
+                                                    <th>POS Tag</th>
+                                                    <th>Hành động (nếu có định nghĩa trong file từ điển)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="wordDetailsBody">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    <!-- Cấu trúc phân tích -->
+                                    <h6><i class="fas fa-sitemap"></i> Cấu trúc ngôn ngữ:</h6>
+                                    <div id="structureAnalysis" class="row mb-4">
+                                        <!-- Will be populated with structure info -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-info-circle"></i> Thông tin Ngôn ngữ Ký hiệu</h5>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Cấu trúc câu trong ngôn ngữ ký hiệu:</strong></p>
+                                <ol>
+                                    <li><strong>Chủ ngữ</strong> (CHỦ NGỮ)</li>
+                                    <li><strong>Tính từ</strong> (TÍNH TỪ)</li>
+                                    <li><strong>Tân ngữ</strong> (TÂN NGỮ)</li>
+                                    <li><strong>Động từ</strong> (ĐỘNG TỪ)</li>
+                                </ol>
+                                
+                                <div class="alert alert-info">
+                                    <i class="fas fa-lightbulb"></i>
+                                    <strong>Lưu ý:</strong> Ngôn ngữ ký hiệu có cấu trúc ngữ pháp khác với tiếng nói, 
+                                    thứ tự từ được sắp xếp lại để phù hợp với đặc điểm của ngôn ngữ ký hiệu.
+                                </div>
+                                
+                                <div id="dictionaryInfo" class="mt-3">
+                                    <h6><i class="fas fa-book"></i> Thông tin từ điển:</h6>
+                                    <div id="dictionaryStats" class="small text-muted">
+                                        Đang tải thông tin từ điển...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h5><i class="fas fa-book"></i> Hướng dẫn</h5>
+                            </div>
+                            <div class="card-body">
+                                <ol>
+                                    <li>Nhập câu tiếng Việt vào ô văn bản</li>
+                                    <li>Hoặc chọn một ví dụ mẫu từ dropdown</li>
+                                    <li>Nhấn nút <strong>Chuyển đổi</strong></li>
+                                    <li>Xem kết quả chuỗi ký hiệu và phân tích cấu trúc</li>
+                                </ol>
+                                
+                                <hr>
+                                
+                                <p class="mb-0"><strong>Backend:</strong> FastAPI<br>
+                                <strong>POS Tagger:</strong> UndertheSea<br>
+                                <strong>Sign Converter:</strong> Custom Vietnamese Sign Language Rules</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Grammar Comparison Tab -->
+            <!-- <div class="tab-pane fade" id="grammar-panel" role="tabpanel">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-microscope"></i> So sánh cấu trúc ngữ pháp: Tiếng Việt vs Ngôn ngữ Ký hiệu</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card border-primary">
+                                            <div class="card-header bg-primary text-white">
+                                                <h6><i class="fas fa-language"></i> Tiếng Việt (SVO)</h6>
+                                            </div>
+                                            <div class="card-body" id="vietnameseGrammarInfo">
+                                                <div class="text-center">
+                                                    <div class="spinner-border text-primary" role="status">
+                                                        <span class="visually-hidden">Đang tải...</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card border-success">
+                                            <div class="card-header bg-success text-white">
+                                                <h6><i class="fas fa-hands"></i> Ngôn ngữ Ký hiệu (SOV)</h6>
+                                            </div>
+                                            <div class="card-body" id="signLanguageGrammarInfo">
+                                                <div class="text-center">
+                                                    <div class="spinner-border text-success" role="status">
+                                                        <span class="visually-hidden">Đang tải...</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <div class="card border-warning">
+                                            <div class="card-header bg-warning">
+                                                <h6><i class="fas fa-exchange-alt"></i> Quy tắc chuyển đổi</h6>
+                                            </div>
+                                            <div class="card-body" id="conversionRulesInfo">
+                                                <div class="text-center">
+                                                    <div class="spinner-border text-warning" role="status">
+                                                        <span class="visually-hidden">Đang tải...</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <div class="card border-info">
+                                            <div class="card-header bg-info text-white">
+                                                <h6><i class="fas fa-lightbulb"></i> Sự khác biệt chính</h6>
+                                            </div>
+                                            <div class="card-body" id="keyDifferencesInfo">
+                                                <div class="text-center">
+                                                    <div class="spinner-border text-info" role="status">
+                                                        <span class="visually-hidden">Đang tải...</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+        
+        <!-- Error message (shared) -->
+        <div id="errorMessage" class="alert alert-danger mt-3" style="display: none;"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="static/js/main.js"></script>
+    <script src="static/js/pos-tagger.js"></script>
+    <script src="static/js/sign-language.js"></script>
+    <!-- <script src="static/js/grammar-comparison.js"></script> -->
+</body>
+</html>

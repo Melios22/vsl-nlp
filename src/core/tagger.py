@@ -1,38 +1,65 @@
+"""
+Vietnamese POS Tagger using UndertheSea
+======================================
+
+This module provides Vietnamese Part-of-Speech tagging functionality using
+the UndertheSea library. It implements a singleton pattern for efficient
+resource management and converts UndertheSea tags to Universal Dependencies format.
+
+Features:
+- Singleton pattern for memory efficiency
+- Automatic tag conversion to UD format
+- Error handling and initialization checking
+- Vietnamese language optimization
+"""
+
+from typing import List, Tuple
+
 from underthesea import pos_tag
 
 
 class UndertheSeaPOSTagger:
     """
-    Một lớp để thực hiện gán nhãn từ loại cho tiếng Việt sử dụng UndertheSea.
-    UndertheSea là một thư viện NLP tiếng Việt nhẹ và nhanh.
+    Vietnamese Part-of-Speech tagger using UndertheSea library.
 
-    Implements Singleton pattern để đảm bảo chỉ có một instance duy nhất.
+    This class provides POS tagging for Vietnamese text using the UndertheSea
+    NLP library, which is lightweight and fast for Vietnamese language processing.
+
+    Implements Singleton pattern to ensure only one instance exists and
+    to avoid repeated model loading.
     """
 
     _instance = None
     _initialized = False
 
     def __new__(cls):
-        """Singleton pattern implementation"""
+        """
+        Singleton pattern implementation.
+
+        Returns:
+            UndertheSeaPOSTagger: The singleton instance
+        """
         if cls._instance is None:
             cls._instance = super(UndertheSeaPOSTagger, cls).__new__(cls)
         return cls._instance
 
     def __init__(self):
         """
-        Khởi tạo UndertheSea POS tagger.
+        Initialize the UndertheSea POS tagger.
+
+        This method only runs once due to the singleton pattern.
+        It tests the pos_tag function to ensure proper initialization.
         """
-        # Chỉ khởi tạo một lần duy nhất
+        # Only initialize once
         if UndertheSeaPOSTagger._initialized:
             return
 
         try:
-            # Test the pos_tag function to make sure it works
+            # Test the pos_tag function to ensure it works
             test_result = pos_tag("Xin chào")
             if test_result:
                 self.is_initialized = True
                 UndertheSeaPOSTagger._initialized = True
-                print("[+] UndertheSea POS Tagger initialized successfully.")
             else:
                 self.is_initialized = False
                 print("[-] Failed to initialize UndertheSea POS Tagger.")
@@ -40,80 +67,82 @@ class UndertheSeaPOSTagger:
             print(f"[-] Error initializing UndertheSea: {e}")
             self.is_initialized = False
 
-    def tag_sentence(self, sentence: str) -> list:
+    def tag_sentence(self, sentence: str) -> List[Tuple[str, str]]:
         """
-        Gán nhãn từ loại cho một câu tiếng Việt.
+        Perform POS tagging on a Vietnamese sentence.
 
         Args:
-            sentence: Một chuỗi string là câu tiếng Việt cần gán nhãn.
+            sentence: Vietnamese text string to be tagged
 
         Returns:
-            Một danh sách các tuple, mỗi tuple chứa (từ, nhãn_từ_loại).
-            Ví dụ: [('Tôi', 'P'), ('đi', 'V'), ('học', 'V'), ('.', 'CH')]
+            List of tuples containing (word, POS_tag) pairs
+            Example: [('Tôi', 'PRON'), ('đi', 'VERB'), ('học', 'VERB')]
         """
         if not self.is_initialized:
             print("[-] UndertheSea POS tagger is not initialized.")
             return []
 
         try:
-            # Sử dụng UndertheSea để gán nhãn từ loại
+            # Use UndertheSea for POS tagging
             pos_tags_result = pos_tag(sentence)
 
-            # UndertheSea trả về list of tuples: [('word', 'tag'), ...]
-            # Chuyển đổi nhãn UndertheSea sang Universal Dependencies nếu cần
+            # Convert UndertheSea tags to Universal Dependencies format
             formatted_tags = []
             for word, tag in pos_tags_result:
-                # Chuyển đổi nhãn từ UndertheSea sang UD tags
                 ud_tag = self._convert_to_ud_tag(tag)
                 formatted_tags.append((word, ud_tag))
 
             return formatted_tags
+
         except Exception as e:
             print(f"[-] Error during POS tagging: {e}")
             return []
 
     def _convert_to_ud_tag(self, underthesea_tag: str) -> str:
         """
-        Chuyển đổi nhãn POS của UndertheSea sang Universal Dependencies tags.
+        Convert UndertheSea POS tags to Universal Dependencies tags.
+
+        This mapping ensures compatibility with international NLP standards
+        and provides consistent tag formats across different tools.
 
         Args:
-            underthesea_tag: Nhãn POS từ UndertheSea
+            underthesea_tag: POS tag from UndertheSea
 
         Returns:
-            Nhãn Universal Dependencies tương ứng
+            Corresponding Universal Dependencies tag
         """
-        # Mapping từ UndertheSea tags sang UD tags
+        # Mapping from UndertheSea tags to UD tags
         tag_mapping = {
             # Nouns
-            "N": "NOUN",  # Noun
+            "N": "NOUN",  # Common noun
             "Np": "PROPN",  # Proper noun
             "Ny": "NOUN",  # Noun abbreviation
             # Verbs
-            "V": "VERB",  # Verb
-            "Vb": "VERB",  # Verb be
-            "Vu": "VERB",  # Verb auxiliary
+            "V": "VERB",  # Main verb
+            "Vb": "VERB",  # Be verb
+            "Vu": "AUX",  # Auxiliary verb
             # Adjectives
             "A": "ADJ",  # Adjective
-            "Ab": "ADJ",  # Adjective
+            "Ab": "ADJ",  # Adjective base
             # Adverbs
             "R": "ADV",  # Adverb
-            "Rb": "ADV",  # Adverb
+            "Rb": "ADV",  # Adverb base
             # Pronouns
             "P": "PRON",  # Pronoun
             "Pp": "PRON",  # Personal pronoun
-            # Prepositions
+            # Prepositions/Adpositions
             "E": "ADP",  # Preposition
-            "Eb": "ADP",  # Preposition
+            "Eb": "ADP",  # Preposition base
             # Conjunctions
-            "C": "CCONJ",  # Conjunction
+            "C": "CCONJ",  # Coordinating conjunction
             "Cc": "CCONJ",  # Coordinating conjunction
             "Cs": "SCONJ",  # Subordinating conjunction
             # Determiners
             "L": "DET",  # Determiner
-            "Lb": "DET",  # Determiner
+            "Lb": "DET",  # Determiner base
             # Numbers
             "M": "NUM",  # Number
-            "Mb": "NUM",  # Number
+            "Mb": "NUM",  # Number base
             # Punctuation
             "CH": "PUNCT",  # Punctuation
             ".": "PUNCT",  # Period
@@ -122,11 +151,11 @@ class UndertheSeaPOSTagger:
             "!": "PUNCT",  # Exclamation mark
             # Particles
             "T": "PART",  # Particle
-            "Tb": "PART",  # Particle
+            "Tb": "PART",  # Particle base
             # Interjections
             "I": "INTJ",  # Interjection
             # Others
-            "X": "X",  # Other
+            "X": "X",  # Other/Unknown
             "Fw": "X",  # Foreign word
         }
 
@@ -135,34 +164,36 @@ class UndertheSeaPOSTagger:
     @classmethod
     def get_instance(cls):
         """
-        Lấy singleton instance của UndertheSea POS Tagger.
+        Get the singleton instance of the UndertheSea POS Tagger.
 
         Returns:
-            UndertheSeaPOSTagger: Singleton instance
+            UndertheSeaPOSTagger: The singleton instance
         """
         return cls()
 
 
-# Only run demo if this file is executed directly
+# Demo and testing code
 if __name__ == "__main__":
-    # Câu ví dụ
+    # Example sentence for testing
     test_sentence = "Sinh viên trường Đại học Khoa học Tự Nhiên rất năng động."
 
-    # Initialize tagger for demo - using singleton
+    print("=== UndertheSea POS Tagger Demo ===")
+
+    # Initialize tagger using singleton pattern
     demo_tagger = UndertheSeaPOSTagger.get_instance()
 
-    # Thực hiện gán nhãn
+    # Perform POS tagging
     if demo_tagger.is_initialized:
         tagged_words = demo_tagger.tag_sentence(test_sentence)
 
-        # In kết quả
-        print(f"\nInput: {test_sentence}")
+        # Display results
+        print(f"\\nInput: {test_sentence}")
         print("Output (UndertheSea -> UD tags):")
         for word, tag in tagged_words:
-            print(f"\t- {word}: {tag}")
+            print(f"  {word:15} -> {tag}")
 
         # Test singleton pattern
-        print("\n[Singleton Test]")
+        print("\\n=== Singleton Pattern Test ===")
         tagger1 = UndertheSeaPOSTagger()
         tagger2 = UndertheSeaPOSTagger.get_instance()
         print(f"tagger1 is tagger2: {tagger1 is tagger2}")

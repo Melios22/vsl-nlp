@@ -4,7 +4,7 @@
 # Empty lines are ignored
 # Words with spaces should use underscores: word_here = SIGN-HERE
 
-# === ĐẠI TỪ NHÂN XƯNG ===
+# === ĐẠI TỪ ===
 tôi = TÔI
 mình = TÔI
 em = TÔI
@@ -16,14 +16,13 @@ họ = HỌ
 chúng_ta = CHÚNG-TA
 chúng_tôi = CHÚNG-TÔI
 
-# === ĐỘNG TỪ CƠ BẢN ===
+# === ĐỘNG TỪ ===
 là = LÀ
 có = CÓ
 không = KHÔNG
 đi = ĐI
 đến = ĐẾN
 về = VỀ
-tới = TỚI
 ăn = ĂN
 uống = UỐNG
 ngủ = NGỦ
@@ -34,14 +33,11 @@ viết = VIẾT
 nói = NÓI
 nghe = NGHE
 nhìn = NHÌN
-thấy = THẤY
 yêu = YÊU
 thích = THÍCH
-ghét = GHÉT
 mua = MUA
 bán = BÁN
 cho = CHO
-lấy = LẤY
 
 # === TÍNH TỪ ===
 đẹp = ĐẸP
@@ -51,63 +47,39 @@ lớn = LỚN
 nhỏ = NHỎ
 cao = CAO
 thấp = THẤP
-dài = DÀI
-ngắn = NGẮN
-rộng = RỘNG
-hẹp = HẸP
-nóng = NÓNG
-lạnh = LẠNH
-ấm = ẤM
-mát = MÁT
 vui = VUI
 buồn = BUỒN
-giận = GIẬN
-hạnh_phúc = HẠNH-PHÚC
 
-# === DANH TỪ THƯỜNG GẶP ===
+# === DANH TỪ ===
 nhà = NHÀ
 trường = TRƯỜNG
 lớp = LỚP
 bàn = BÀN
 ghế = GHẾ
-cửa = CỬA
-cửa_sổ = CỬA-SỔ
 nước = NƯỚC
 cơm = CƠM
 bánh = BÁNH
-trà = TRÀ
 mẹ = MẸ
 bố = BỐ
 con = CON
-ông = ÔNG
-bà = BÀ
 
-# === TỪ CHỈ THỜI GIAN ===
+# === THỜI GIAN ===
 hôm_nay = HÔM-NAY
 ngày_mai = NGÀY-MAI
 hôm_qua = HÔM-QUA
 sáng = SÁNG
-trưa = TRƯA
 chiều = CHIỀU
 tối = TỐI
-tuần = TUẦN
-tháng = THÁNG
-năm = NĂM
 
-# === TỪ CHỈ NƠI CHỐN ===
+# === NƠI CHỐN ===
 đây = ĐÂY
 đó = ĐÓ
-kia = KIA
 trong = TRONG
 ngoài = NGOÀI
 trên = TRÊN
 dưới = DƯỚI
-bên = BÊN
-giữa = GIỮA
-gần = GẦN
-xa = XA
 
-# === SỐ ĐẾM ===
+# === SỐ ===
 một = 1
 hai = 2
 ba = 3
@@ -124,31 +96,22 @@ gì = GÌ
 ai = AI
 đâu = ĐÂU
 khi_nào = KHI-NÀO
-như_thế_nào = NHƯ-THẾ-NÀO
 tại_sao = TẠI-SAO
 
-# === GIÁO DỤC & HỌC TẬP ===
+# === GIÁO DỤC ===
 đại_học = ĐẠI-HỌC
 khoa_học = KHOA-HỌC
-tự_nhiên = TỰ-NHIÊN
 công_nghệ = CÔNG-NGHỆ
 thông_tin = THÔNG-TIN
 sinh_viên = SINH-VIÊN
 giáo_viên = GIÁO-VIÊN
-bài_học = BÀI-HỌC
-kiểm_tra = KIỂM-TRA
-thi = THI
 
-# === THÀNH PHỐ & ĐỊA DANH ===
+# === ĐỊA DANH ===
 việt_nam = VIỆT-NAM
 hà_nội = HÀ-NỘI
-hồ_chí_minh = HỒ-CHÍ-MINH
-đà_nẵng = ĐÀ-NẴNG
 
-# === CÁC TỪ KHÁC ===
+# === KHÁC ===
 tiếng = TIẾNG
 ngôn_ngữ = NGÔN-NGỮ
-ký_hiệu = KÝ-HIỆU
 từ = TỪ
 câu = CÂU
-văn_bản = VĂN-BẢN

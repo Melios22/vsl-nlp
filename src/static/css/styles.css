@@ -1,0 +1,53 @@
+/* Styling cho Vietnamese NLP System */
+
+.loading {
+    display: none;
+}
+
+.tag-colors {
+    font-size: 0.8em;
+}
+
+.word-tag {
+    display: inline-block;
+    margin: 2px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    position: relative;
+}
+
+.word-tag .tag-label {
+    position: absolute;
+    top: -8px;
+    right: -4px;
+    font-size: 0.7em;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 1px 4px;
+    border-radius: 2px;
+}
+
+/* Màu sắc cho các nhãn POS */
+.tag-NOUN { background-color: #FF6B6B; color: white; }
+.tag-PROPN { background-color: #4ECDC4; color: white; }
+.tag-VERB { background-color: #45B7D1; color: white; }
+.tag-ADJ { background-color: #96CEB4; color: white; }
+.tag-ADV { background-color: #FFEAA7; color: black; }
+.tag-ADP { background-color: #DDA0DD; color: white; }
+.tag-PRON { background-color: #98D8C8; color: white; }
+.tag-DET { background-color: #F7DC6F; color: black; }
+.tag-NUM { background-color: #BB8FCE; color: white; }
+.tag-PUNCT { background-color: #85C1E9; color: white; }
+.tag-CCONJ { background-color: #F8C471; color: black; }
+.tag-SCONJ { background-color: #82E0AA; color: white; }
+.tag-PART { background-color: #F1948A; color: white; }
+.tag-INTJ { background-color: #D2B4DE; color: white; }
+.tag-X { background-color: #D5DBDB; color: black; }
+
+.api-status {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+}
